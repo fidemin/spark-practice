@@ -40,6 +40,8 @@
 **/.cache
 /.idea
 /.settings
+**/target
+**/out
 
 # vscode
 /.vscode
@@ -67,4 +69,8 @@ jitwatch.out
 project/**/metals.sbt
 
 .bsp
+
+
+# others
+**/*.log
 
