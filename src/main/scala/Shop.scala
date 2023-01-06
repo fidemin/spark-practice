@@ -1,6 +1,7 @@
 package com.yunhongmin
 
 import org.apache.spark.sql.SparkSession
+import org.apache.spark.sql.functions.{col, countDistinct, sum}
 
 object Shop {
 
@@ -49,7 +50,18 @@ object Shop {
     printf(s"number of sellers: $numOfSellers\n")
 
     // unique product sold at least once
-    val numOfProductSoldAtLeastOnce = salesDf.select(salesDf.col("product_id")).distinct().count()
+    val numOfProductSoldAtLeastOnce = salesDf.select(col("product_id")).distinct().count()
     printf(s"number of product sold at least once: $numOfProductSoldAtLeastOnce\n")
+
+    // unique product sold at least once per day
+    val salesUnqiueProductCountByDateDf = salesDf.select(col("date"), col("product_id"))
+      .groupBy(col("date"))
+      .agg(countDistinct("product_id").alias("unique_products_per_date"))
+
+    salesUnqiueProductCountByDateDf.cache()
+
+    salesUnqiueProductCountByDateDf.orderBy("date").show()
+    salesUnqiueProductCountByDateDf.agg(sum("unique_products_per_date")).show()
+
   }
 }
